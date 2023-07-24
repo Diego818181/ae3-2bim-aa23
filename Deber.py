@@ -95,6 +95,16 @@ class Ui_MainWindow(object):
         cadena_sql = """INSERT INTO Calificacion (nombre, nota, fecha) VALUES (?, ?, ?)"""
         cursor.execute(cadena_sql, (nombre, nota, fecha_actual))
         conn.commit()
+        cadena_consulta_sql = "SELECT * from Calificacion"
+        cursor.execute(cadena_consulta_sql)
+        informacion = cursor.fetchall()
+        self.listaCalificaciones.setRowCount(0)
+        for row_num, row_data in enumerate(informacion):
+            self.listaCalificaciones.insertRow(row_num)
+            for col_num, col_data in enumerate(row_data):
+                if col_num == 2:  # Convertir la fecha al formato adecuado
+                    col_data = datetime.strptime(col_data, "%Y-%m-%d").strftime("%d-%m-%Y")
+                self.listaCalificaciones.setItem(row_num, col_num, QtWidgets.QTableWidgetItem(str(col_data)))
         cursor.close()
 
     def obtener_informacion(self):
